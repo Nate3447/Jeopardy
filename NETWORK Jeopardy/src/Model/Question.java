@@ -13,11 +13,13 @@ public class Question {
 	}
 	
 	public Question(String category, String question, String answer, int points, boolean isAnswered) {
+	
 		this.category = category;
 		this.question = question;
 		this.answer = answer;
 		this.points = points;
 		this.isAnswered = isAnswered;
+	
 	}
 
 	public String getCategory() {
