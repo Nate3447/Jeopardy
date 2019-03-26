@@ -61,6 +61,18 @@ public class UDPServer {
 		System.out.println(game.getWinner());
 	}
 	
+	public void sendData() {
+		
+		
+		
+	}
+	
+	public void receiveData() {
+		
+		
+		
+	}
+	
 	public void initGame() {
 		game = new Jeopardy();
 		questions = new ArrayList<Question>();

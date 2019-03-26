@@ -2,6 +2,7 @@ package Controller;
 
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 public class UDPClient {
 	
@@ -13,6 +14,8 @@ public class UDPClient {
 		
 		InetAddress IPAddress = InetAddress.getLocalHost();
 		
+		Scanner scanner = new Scanner(System.in);
+		
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
 		
@@ -20,7 +23,7 @@ public class UDPClient {
 		boolean youWon = false;
 		
 		while(!gameOver) {
-			
+			String input = scanner.nextLine();
 			
 			
 		}
