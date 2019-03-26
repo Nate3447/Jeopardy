@@ -11,11 +11,25 @@ public class UDPClient {
 		
 		DatagramSocket clientSocket = new DatagramSocket();
 		
-		InetAddress IPAddress = InetAddress.getByName("hostname");
+		InetAddress IPAddress = InetAddress.getLocalHost();
 		
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
 		
+		boolean gameOver = false;
+		boolean youWon = false;
+		
+		while(!gameOver) {
+			
+			
+			
+		}
+		
+		if(youWon) {
+			System.out.println("You won!");
+		} else {
+			System.out.println("You lost!");
+		}
 	}
 	
 	public void sendData(String data) {
