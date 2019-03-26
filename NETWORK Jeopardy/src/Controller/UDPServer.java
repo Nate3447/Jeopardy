@@ -9,18 +9,29 @@ import Model.Question;
 
 public class UDPServer {
 	
+// MESSAGE TYPES:
+//	- Player joins
+//	- Ready to start
+//	- View player details
+//	- Pick question
+//	- Press Buzzer
+//	- Give Answer
+//	- Chat message
+	
 	private Jeopardy game;
 	private ArrayList<Question> questions;
 	
 	
 	public void startServer() throws Exception {
 		
+		initGame();
+		
 		DatagramSocket serverSocket = new DatagramSocket(9876);
 		
 		byte[] receiveData = new byte[1024];
 		byte[] sendData = new byte[1014];
 		
-		while(true) {
+		while(!game.hasWinner()) {
 			
 			// RECEIVE DATA
 			
@@ -45,6 +56,7 @@ public class UDPServer {
 			serverSocket.send(sendPacket);
 		}
 		
+		System.out.println(game.getWinner());
 	}
 	
 	public void initGame() {
@@ -80,6 +92,8 @@ public class UDPServer {
 		questions.add(new Question("English", "A group of words not containing a subject and its verb", "phrase", 300, false));
 		
 		game.setQuestions(questions);
+		
+		
 	}
 	
 }

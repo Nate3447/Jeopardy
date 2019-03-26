@@ -6,22 +6,17 @@ import Model.*;
 
 public class Main {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		UDPClient client;
 		UDPServer server;
-		Jeopardy game;
-		ArrayList<Question> questions;
-		Player player1;
-		Player player2;
-		Player player3;
 		
 		
 		boolean isServer = true;
 		
 		if (isServer) {
 			server = new UDPServer();
-			
+			server.startServer();
 			
 		} else {
 			
