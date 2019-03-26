@@ -38,12 +38,14 @@ public class UDPServer {
 			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 			serverSocket.receive(receivePacket);
 			
+			// PARSE DATA (GET FLAGS FROM FIRST BYTES, RECEIVE THE REST)
+			
 			String sentence = new String(receivePacket.getData());
 			InetAddress IPAddress = receivePacket.getAddress();
 			
 			int port = receivePacket.getPort();
 			
-			// DO STUFF TO DATA
+			// DO STUFF TO DATA BASED ON FLAGS
 			
 			String capitalizedSentence = sentence.toUpperCase();
 			
