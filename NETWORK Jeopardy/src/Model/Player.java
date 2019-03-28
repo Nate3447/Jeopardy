@@ -9,9 +9,11 @@ public class Player {
 	InetAddress ip;
 	int port;
 	
-	public Player(String name, int points) {
+	public Player(String name, int points, InetAddress ip, int port) {
 		this.name = name;
 		this.points = points;
+		this.ip = ip;
+		this.port = port;
 	}
 
 	public String getName() {
@@ -30,14 +32,6 @@ public class Player {
 		this.points = points;
 	}
 
-	public void addPoints(int points) {
-		this.points += points;
-	}
-	
-	public void removePoints(int points) {
-		this.points -= points;
-	}
-	
 	public InetAddress getIp() {
 		return ip;
 	}
@@ -52,6 +46,14 @@ public class Player {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+	
+	public void addPoints(int points) {
+		this.points += points;
+	}
+	
+	public void removePoints(int points) {
+		this.points -= points;
 	}
 	
 }

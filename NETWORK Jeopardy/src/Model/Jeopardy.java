@@ -28,7 +28,9 @@ public class Jeopardy {
 	private boolean noWinner;
 	
 	public Jeopardy() {
-		
+		players = new ArrayList<Player>();
+		questions = new ArrayList<Question>();
+		noWinner = false;
 	}
 	
 	public ArrayList<Player> getPlayers() {
@@ -55,21 +57,42 @@ public class Jeopardy {
 		
 	}
 	
-	public void joinPlayer(String name) {
-		
-		
-		
+	public void joinPlayer(Player player) {
+		players.add(player);
+	}
+	
+	public boolean playerExists(Player player) {
+		boolean exists = false;
+		for(int i=0; i<players.size(); i++) {
+			if(players.get(i).getName().equals(player.getName())) {
+				exists = true;
+			}
+		}
+		return exists;
 	}
 	
 	public void leavePlayer(String name) {
 		
-		
+		boolean found = false;
+		int playerIndex = 0;
+		for(int i=0; i<players.size();i++) {
+			if(players.get(i).getName().equals(name)) {
+				playerIndex = i;
+				found = true;
+			}
+		}
+		if(found) {
+			players.remove(playerIndex);
+		}
 		
 	}
 	
 	public ArrayList<String> getCategories() {
 	
 		ArrayList<String> categories = new ArrayList<String>();
+		
+		// Get categories given in question arraylist
+
 		
 		return categories;
 		
@@ -78,6 +101,8 @@ public class Jeopardy {
 	public ArrayList<Question> getQuestionsByCategory(String category) {
 	
 		ArrayList<Question> questions = new ArrayList<Question>();
+		
+		// Get questions from given category
 		
 		return questions;
 		
@@ -94,10 +119,15 @@ public class Jeopardy {
 	}
 	
 	public boolean hasWinner() {
+		// count remaining questions
+		//	if 0, select winner
+		
 		return true;
 	}
 	
 	public String getWinner() {
+		// check player arraylist for highest score
+		
 		return "Winner";
 	}
 }
