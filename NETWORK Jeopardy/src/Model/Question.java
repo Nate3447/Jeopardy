@@ -2,6 +2,7 @@ package Model;
 
 public class Question {
 	
+	private String questionId;
 	private String category;
 	private String question;
 	private String answer;
@@ -12,8 +13,8 @@ public class Question {
 		
 	}
 	
-	public Question(String category, String question, String answer, int points, boolean isAnswered) {
-	
+	public Question(String questionId, String category, String question, String answer, int points, boolean isAnswered) {
+		this.questionId = questionId;
 		this.category = category;
 		this.question = question;
 		this.answer = answer;
@@ -22,6 +23,14 @@ public class Question {
 	
 	}
 
+	public String getQuestionId() {
+		return questionId;
+	}
+	
+	public void setQuestionId(String questionId) {
+		this.questionId = questionId;
+	}
+	
 	public String getCategory() {
 		return category;
 	}

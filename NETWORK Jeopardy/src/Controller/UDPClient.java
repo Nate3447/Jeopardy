@@ -22,6 +22,8 @@ public class UDPClient {
 		boolean gameOver = false;
 		boolean youWon = false;
 		
+		System.out.println("Joining game...\n");
+		
 		while(!gameOver) {
 			String input = scanner.nextLine();
 			

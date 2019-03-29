@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 // 	ACTIONS:
 //		- Preparation Phase:
@@ -31,6 +32,12 @@ public class Jeopardy {
 		players = new ArrayList<Player>();
 		questions = new ArrayList<Question>();
 		noWinner = false;
+	}
+	
+	public static void instruct() {
+		System.out.println("Welcome to Jeopardy! \n\n\tIn this you are to compete with other players by accumulating the highest number of points.\n\tTo gain points, a category and question is picked by a designated \"picker\".\n\tThe first player to hit the buzzer gets to answer the chosen question.\n\tThe first person to reach 2000 points is declared the winner.\n\nPress any key to join a game. ");
+		Scanner scan = new Scanner(System.in);
+		scan.nextLine();
 	}
 	
 	public ArrayList<Player> getPlayers() {
