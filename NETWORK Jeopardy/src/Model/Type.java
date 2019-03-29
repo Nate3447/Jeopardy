@@ -6,5 +6,7 @@ public final class Type {
 	public static final int PICK = 2;
 	public static final int BUZZ = 3;
 	public static final int ANS = 4;
-	public static final int CHAT = 5;
+	public static final int INFO = 5;
+	public static final int CHAT = 6;
+
 }

@@ -4,9 +4,15 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
+import Model.Jeopardy;
+
 public class UDPClient {
 	
+	private Jeopardy game;
+	
 	public void startClient() throws Exception {
+		
+		game = new Jeopardy();
 		
 		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 		
