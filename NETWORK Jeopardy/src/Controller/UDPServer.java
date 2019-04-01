@@ -46,7 +46,7 @@ public class UDPServer {
 			game.setCurrentPhase(Phase.QUESTION);
 			// Tell picker to choose question
 			// Listen for chosen question
-			// Tell players chosen question
+			// Tell all players chosen question
 			// Tell players to buzz
 			// Tell first buzzer to answer
 			// Get answer
