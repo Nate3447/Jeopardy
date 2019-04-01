@@ -8,30 +8,43 @@ import Model.Jeopardy;
 
 public class UDPClient {
 	
-	private Jeopardy game;
+	private static final int BUFFER_SIZE = 1024;
 	
-	public void startClient() throws Exception {
+	private InetAddress serverAddress;
+	private int serverPort;
+	//private InetAddress clientAddress;
+	private int clientPort;
+	private Jeopardy game;
+	private byte[] sendData;
+	private byte[] receiveData;
+	DatagramSocket socket;
+	
+	public UDPClient(String address, int serverPort, int clientPort) throws Exception {
+		serverAddress = InetAddress.getByName(address);
+		//serverAddress = InetAddress.getLocalHost();
+		this.serverPort = serverPort;
+		this.clientPort = clientPort;
+	}
+	
+	public void run() throws Exception {				
+
+		//clientAddress = InetAddress.getLocalHost();
+		socket = new DatagramSocket(clientPort);
 		
-		game = new Jeopardy();
+		Scanner scan = new Scanner(System.in);
+		System.out.println("What is your name? ");
+		String name = scan.nextLine();
+		System.out.println("Finding a game for player: " + name + "...\n");
+		joinGame(name);
 		
-		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-		
-		DatagramSocket clientSocket = new DatagramSocket();
-		
-		InetAddress IPAddress = InetAddress.getLocalHost();
-		
-		Scanner scanner = new Scanner(System.in);
-		
-		byte[] sendData = new byte[1024];
-		byte[] receiveData = new byte[1024];
 		
 		boolean gameOver = false;
 		boolean youWon = false;
 		
-		System.out.println("Joining game...\n");
+		
 		
 		while(!gameOver) {
-			String input = scanner.nextLine();
+			String input = scan.nextLine();
 			
 			
 		}
@@ -43,16 +56,28 @@ public class UDPClient {
 		}
 	}
 	
-	public void sendData(String data) {
-		
-		
+	public void joinGame(String name) throws Exception {
+		sendData(name);
+		System.out.println("Host reached... ");
+		DatagramPacket packet = receiveData();
+		System.out.println(new String(packet.getData()).trim());
+	}
+	
+	public void sendData(String data) throws Exception {
+		sendData = new byte[1024];
+		sendData = data.getBytes();
+		DatagramPacket packet = new DatagramPacket(sendData, sendData.length, serverAddress, serverPort);
+		socket.send(packet);
 		
 	}
 	
-	public void receiveData(String data) {
+	public DatagramPacket receiveData() throws Exception {
+		receiveData = new byte[BUFFER_SIZE];
 		
+		DatagramPacket packet = new DatagramPacket(receiveData, receiveData.length);
+		socket.receive(packet);
 		
-		
+		return packet;
 	}
 
 }

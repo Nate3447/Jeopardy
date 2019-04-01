@@ -40,11 +40,23 @@ public class Main {
 		
 		if (isServer) {
 			server = new UDPServer();
-			server.startServer();
+			System.out.println("Starting server...");
+			server.run();
 		} else {
+			String address;
+			int serverPort;
+			int clientPort;
 			Jeopardy.instruct();
-			client = new UDPClient();
-			client.startClient();
+			System.out.println("Address of server? ");
+			//address = scan.nextLine();
+			address = "localhost";
+			System.out.println("Port of server? ");
+			serverPort = scan.nextInt();
+			System.out.println("Your port? ");
+			clientPort = scan.nextInt();
+			client = new UDPClient(address, serverPort, clientPort);
+			System.out.println("Starting client...");
+			client.run();
 		}
 		
 	}
