@@ -37,14 +37,20 @@ public class UDPClient {
 		System.out.println("Finding a game for player: " + name + "...\n");
 		joinGame(name);
 		
-		
+		boolean canRespond = false;
 		boolean gameOver = false;
 		boolean youWon = false;
 		
 		
 		
 		while(!gameOver) {
-			String input = scan.nextLine();
+			
+			
+			
+			if(canRespond) {
+				String input = scan.nextLine();
+			}
+			
 			
 			
 		}
@@ -63,8 +69,12 @@ public class UDPClient {
 		System.out.println(new String(packet.getData()).trim());
 	}
 	
+	public void hitBuzzer() throws Exception {
+		
+	}
+	
 	public void sendData(String data) throws Exception {
-		sendData = new byte[1024];
+		sendData = new byte[BUFFER_SIZE];
 		sendData = data.getBytes();
 		DatagramPacket packet = new DatagramPacket(sendData, sendData.length, serverAddress, serverPort);
 		socket.send(packet);
