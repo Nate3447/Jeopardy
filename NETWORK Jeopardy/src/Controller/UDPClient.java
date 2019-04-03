@@ -37,6 +37,7 @@ public class UDPClient {
 		System.out.println("Finding a game for player: " + name + "...\n");
 		joinGame(name);
 		
+		
 		boolean canRespond = false;
 		boolean gameOver = false;
 		boolean youWon = false;
@@ -46,8 +47,8 @@ public class UDPClient {
 		while(!gameOver) {
 			
 			DatagramPacket packet = receiveData();
-			System.out.println("PRINT DATA HERE");
-			
+			System.out.println(getPacketMessage(packet));
+			canRespond = isWaiting(packet);
 			if(canRespond) {
 				String input = scan.nextLine();
 				sendData(input);
@@ -64,33 +65,29 @@ public class UDPClient {
 	public void joinGame(String name) throws Exception {
 		sendData(name);
 		System.out.println("Host reached... ");
-		DatagramPacket packet = receiveData();
-		System.out.println(new String(packet.getData()).trim());
-	}
-	
-	public void hitBuzzer() throws Exception {
 		
 	}
 	
 	public String readPacket(DatagramPacket packet) {
-		String data = new String(packet.getData()).trim();
-		return data;
+		String message = new String(packet.getData()).trim();
+		return message;
 	}
 	
-	public String getPacketMessage(String data) {
-		String message = null;
+	public String getPacketMessage(DatagramPacket packet) {
+		String message = readPacket(packet);
+		
+		// return substring of message
 		
 		return message;
 	}
 	
-	public int getPacketType(String data) {
-		int type = 0;
+	public boolean isWaiting(DatagramPacket packet) {
+		boolean isWaiting = false;
+		String message = readPacket(packet);
 		
-		return type;
-	}
-	
-	public void canReply(String message) {
+		// Get first char of message
 		
+		return isWaiting;
 	}
 	
 	public void sendData(String data) throws Exception {
