@@ -32,6 +32,7 @@ public class UDPServer {
 	private static final int PORT = 9876;
 	private static final boolean NO_REPLY = false;
 	private static final boolean HAS_REPLY = true;
+	private static final String END_CODE = "11203447";
 	
 	private Jeopardy game;	
 	private byte[] sendData;
@@ -48,11 +49,13 @@ public class UDPServer {
 		while(game.getPlayers().size() < 3) {
 			waitForPlayers();
 		}
-		broadcast("Game started!\n");
+		broadcast("\nGame started!\n");
 		// Give player data to other players
 		broadcastPlayers();
 		// First player that joined is first picker
 		Player picker = game.getPlayer(0);
+
+		broadcast(picker.getName() + " is now choosing a category... \n");
 		// Send picker categories
 		sendData(picker, "Choose a category! \n", NO_REPLY);
 		ArrayList<String> categories = new ArrayList<String>();
@@ -67,8 +70,8 @@ public class UDPServer {
 		// Picker chooses category for game
 		int choice = 0;
 		while(!valid) {
-			String response = receiveFrom(picker);
-			choice = Integer.getInteger(response);
+			String response = receiveAnswer();
+			choice = Integer.parseInt(response);
 			if(choice > 0 && choice <= categories.size()) {
 				valid = true;
 				questions = game.getQuestionsByCategory(game.getCategories().get(choice-1));
@@ -81,54 +84,85 @@ public class UDPServer {
 		// Tell all players what category is being used
 		broadcast(picker.getName() + " has chosen the category: " + game.getCategories().get(choice-1));
 
+		System.out.println("QUESTIONS: " + questions);
 		
 		ArrayList<String> questionOptions = new ArrayList<String>();
-		
-		while(!game.hasWinner()) {
-			// game.setCurrentPhase(Phase.QUESTION);
+		questionOptions = getQuestionOptions(questions);
+		System.out.println("VALUES OPTIONS: " + questionOptions);
 
+		while(!game.hasWinner()) {
+			// use ArrayList questions to track question stats
+			
 			broadcast("The following point values are available for this category: ");
-			broadcast(picker.getName() + " will now pick a question. When you receive the question, you may buzz by sending any input. Get ready! ");
-			questionOptions = game.getQuestionOptions(questions);
+			broadcast(picker.getName() + " will now pick a question. When you receive the question, you may buzz by sending any input. Get ready! \n");
 			broadcastList(questionOptions);
 			// Tell picker to choose question
 			
-			sendData(picker, "What value would you like to try to answer? ", HAS_REPLY);
+			sendData(picker, "\nWhat value would you like to try to answer? ", HAS_REPLY);
 			
 			// Listen for chosen value
-			
-			String chosenValue = receiveFrom(picker);
-			
-			
+			String chosenValue = receiveAnswer();
 			// Tell all players chosen question
+			broadcast(picker.getName() + " chose to answer the " + chosenValue + " point question. ");
 			
-			broadcast(picker.getName() + "chose to answer the " + chosenValue + " point question. ");
-			
-			Question currentQuestion = game.getQuestionByPoints(questions, Integer.getInteger(chosenValue));
-			broadcast(currentQuestion.getQuestion());
+			//Question currentQuestion = game.getQuestionByPoints(questions, Integer.getInteger(chosenValue));
+			int current = getQuestionIndexByPoints(questions, Integer.parseInt(chosenValue));
+			broadcast("The question is: " + questions.get(current).getQuestion() + "\n");
+			buzzMode();
 			
 			// Wait for buzz
 			// Get response from all players. First person to send message answers
 			Player buzzPlayer = receiveBuzz();
 			
 			// Tell first buzzer to answer
-			broadcast(buzzPlayer + " was the first to hit the buzzer! Give your answer!");
+			broadcast(buzzPlayer.getName() + " was the first to hit the buzzer! Waiting for answer... ");
 			sendData(buzzPlayer, "Your answer is: ", HAS_REPLY);
 			
 			// Get answer
-			String answer = receiveFrom(buzzPlayer);
+			String answer = receiveAnswer();
 
 			// If correct, change picker, add points
-			if(currentQuestion.getAnswer().equals(answer.toLowerCase())) {
+			if(questions.get(current).getAnswer().equals(answer.toLowerCase())) {
 				picker = game.getPlayer(game.getPlayerIndexByName(buzzPlayer.getName()));
-				picker.addPoints(currentQuestion.getPoints());;
+				picker.addPoints(questions.get(current).getPoints());
+				broadcast(picker.getName() + " answered the question correctly!");
+			} else {
+				broadcast(picker.getName() + " gave a wrong answer!");
 			}
+			questions.remove(current);
+			questionOptions.remove(current);
+			broadcast("Current scores: \n");
+			broadcastPlayers();
+			broadcast("\nMoving on to the next round... ");
 		}
 		
 		broadcast("A player has reached 1000+ points!\n");
 		
 		broadcast("The winner is " + game.getWinner() + "!\n");
+		endGame();
 		
+	}
+	
+	public ArrayList<String> getQuestionOptions(ArrayList<Question> questions) {
+		ArrayList<String> options = new ArrayList<String>();
+		
+		for(int i=0; i<questions.size(); i++) {
+			if(!questions.get(i).isAnswered()) {
+				options.add(Integer.toString(questions.get(i).getPoints()));
+			}
+		}
+		
+		return options;
+	}
+	
+	public int getQuestionIndexByPoints(ArrayList<Question> questions, int value) {
+		int index = 0;
+		for(int i=0; i<questions.size(); i++) {
+			if(questions.get(i).getPoints() == value) {
+				index = i;
+			}
+		}
+		return index;
 	}
 	
 	public void waitForPlayers() throws Exception {
@@ -136,7 +170,7 @@ public class UDPServer {
 		game.joinPlayer(playerJoins());
 		System.out.println(game.getPlayer(game.getPlayers().size()-1).getName() + " has joined.\n");
 		// if player joins, broadcast to all players
-		broadcast(game.getPlayers().size() + " players ready...  \n");
+		broadcast(game.getPlayers().size() + " player(s) ready...  \n\n");
 	}
 	
 	public Player playerJoins() throws Exception {
@@ -157,36 +191,43 @@ public class UDPServer {
 	
 	public Player receiveBuzz() throws Exception {
 		Player firstBuzz = null;
-		
+		ArrayList<DatagramPacket> packets = new ArrayList<DatagramPacket>();
 		// WAIT FOR EACH PLAYER'S BUZZ
-		DatagramPacket packet = receiveData();
-		firstBuzz = game.getPlayerByAddress(packet.getAddress());
-		
-		return firstBuzz;
-	}
-	
-	public String receiveFrom(Player player) throws Exception {
-		String response = null;
-		boolean fromPlayer = false;
-		DatagramPacket packet = null;
-		
-		System.out.println("Getting response from: " + player.getName());
-		
-		while(!fromPlayer) {
-			packet = receiveData();
-			packet.getAddress();
-			if(packet.getAddress().equals(player.getIp())) {
-				response = new String(packet.getData()).trim();
-				fromPlayer = true;
+		for(int i=0; i<game.getPlayers().size(); i++) {
+			packets.add(receiveData());
+			if(i==0) {
+				firstBuzz = game.getPlayerByAddress(packets.get(0).getAddress());
 			}
+			System.out.println("Buzz received... ");
 		}
 		
-		return response;
+		return firstBuzz;
 	}
 	
 	public void broadcast(String message) throws Exception {
 		for(int i=0; i<game.getPlayers().size(); i++) {
 			sendData(game.getPlayer(i), message, NO_REPLY);
+		}
+	}
+
+	public void broadcastPlayers() throws Exception {
+		Player player;
+		broadcast("Players: \n");
+		for(int i=0; i<game.getPlayers().size(); i++) {
+			player = game.getPlayer(i);
+			broadcast("\nPlayer " + (i+1) + ": " + player.getName() + "\nPoints: " + player.getPoints() + "\n");
+		}
+	}
+	
+	public void buzzMode() throws Exception {
+		for(int i=0; i<game.getPlayers().size(); i++) {
+			sendData(game.getPlayer(i), "Hit your buzzers!", HAS_REPLY);
+		}
+	}
+	
+	public void endGame() throws Exception {
+		for(int i=0; i<game.getPlayers().size(); i++) {
+			sendData(game.getPlayer(i), END_CODE, NO_REPLY);
 		}
 	}
 	
@@ -196,14 +237,15 @@ public class UDPServer {
 		}
 	}
 	
-	public void broadcastPlayers() throws Exception {
-		// NOT DONE
-	}
-	
 	public void sendList(Player player, ArrayList<String> list) throws Exception {
 		for(int i=0; i<list.size(); i++) {
 			sendData(player, list.get(i), false);
 		}
+	}
+	
+	public String receiveAnswer() throws Exception {
+		String message = new String(receiveData().getData()).trim();
+		return message;
 	}
 	
 	public void sendData(Player player, String message, boolean getResponse) throws Exception {
@@ -215,19 +257,24 @@ public class UDPServer {
 		}
 		
 		sendData = new byte[BUFFER_SIZE];
+		receiveData = new byte[BUFFER_SIZE];
 		
 		sendData = newMessage.getBytes();
 		DatagramPacket packet = new DatagramPacket(sendData, sendData.length, player.getIp(), player.getPort());
 		socket.send(packet);
-		System.out.println("Packet sent... ");
+		System.out.println("Packet sent: " + new String(packet.getData()).trim());
+
 	}
 	
 	public DatagramPacket receiveData() throws Exception {
 		receiveData = new byte[BUFFER_SIZE];
-		
+		sendData = new byte[BUFFER_SIZE];
 		DatagramPacket packet = new DatagramPacket(receiveData, receiveData.length);
 		socket.receive(packet);
-		System.out.println("Packet received... ");
+		// STOP AND WAIT
+		System.out.println("Packet received: " + new String(packet.getData()).trim());
+		DatagramPacket ack = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
+		socket.send(ack);
 		
 		return packet;
 	}

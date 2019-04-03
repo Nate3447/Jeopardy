@@ -138,11 +138,16 @@ public class Jeopardy {
 	
 	public ArrayList<Question> getQuestionsByCategory(String category) {
 	
-		ArrayList<Question> questions = new ArrayList<Question>();
+		ArrayList<Question> questionSet = new ArrayList<Question>();
 		
 		// Get questions from given category
+		for(int i=0; i<questions.size(); i++) {
+			if(questions.get(i).getCategory().equals(category)) {
+				questionSet.add(questions.get(i));
+			}
+		}
 		
-		return questions;
+		return questionSet;
 		
 	}
 
@@ -182,12 +187,13 @@ public class Jeopardy {
 	
 	public boolean hasWinner() {
 		// check if anyone has 1000 or more points
+		hasWinner = false;
 		for(int i=0; i<players.size(); i++) {
 			if(players.get(i).getPoints() >= 1000) {
 				hasWinner = true;
 			}
 		}
-		return true;
+		return hasWinner;
 	}
 	
 	public Player getPlayerByAddress(InetAddress address) {
