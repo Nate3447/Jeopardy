@@ -45,14 +45,13 @@ public class UDPClient {
 		
 		while(!gameOver) {
 			
-			
+			DatagramPacket packet = receiveData();
+			System.out.println("PRINT DATA HERE");
 			
 			if(canRespond) {
 				String input = scan.nextLine();
-			}
-			
-			
-			
+				sendData(input);
+			} 
 		}
 		
 		if(youWon) {
@@ -70,6 +69,27 @@ public class UDPClient {
 	}
 	
 	public void hitBuzzer() throws Exception {
+		
+	}
+	
+	public String readPacket(DatagramPacket packet) {
+		String data = new String(packet.getData()).trim();
+		return data;
+	}
+	
+	public String getPacketMessage(String data) {
+		String message = null;
+		
+		return message;
+	}
+	
+	public int getPacketType(String data) {
+		int type = 0;
+		
+		return type;
+	}
+	
+	public void canReply(String message) {
 		
 	}
 	
