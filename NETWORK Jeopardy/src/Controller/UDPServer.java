@@ -6,10 +6,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import Model.Jeopardy;
-import Model.Phase;
 import Model.Player;
 import Model.Question;
-import Model.Type;
 
 public class UDPServer {
 	

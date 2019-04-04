@@ -12,13 +12,10 @@ import java.util.Scanner;
 //			- Question:
 //				- "Picker" (Selected randomly at start or person who answered last question correctly) picks a category and dollar value.
 //				- Players can hit buzzer to try to answer.
-//				- Ten seconds are given to answer for person who hit buzzer.
 //				- If answer correct: Points awarded to player, player becomes "picker", else: move on.
 //			- Any Time:
 //				- Players ring buzzer
 //				- Players get all player details (name, scores)
-//				- Players view scores
-//				- Players can chat
 //		- End Phase (Player has 1000+ points):
 //			- Scores shown
 //			- Winner is chosen
@@ -27,7 +24,6 @@ public class Jeopardy {
 	
 	private ArrayList<Player> players;
 	private ArrayList<Question> questions;
-	private int currentPhase;
 	private int currentPicker;
 	private boolean hasWinner;
 	
@@ -35,7 +31,6 @@ public class Jeopardy {
 		players = new ArrayList<Player>();
 		questions = new ArrayList<Question>();
 		currentPicker = 0;
-		currentPhase = Phase.START;
 		hasWinner = false;
 	}
 	
@@ -75,14 +70,6 @@ public class Jeopardy {
 	
 	public void setCurrentPicker(int currentPicker) {
 		this.currentPicker = currentPicker;
-	}
-	
-	public int getCurrentPhase() {
-		return currentPhase;
-	}
-	
-	public void setCurrentPhase(int currentPhase) {
-		this.currentPhase = currentPhase;
 	}
 	
 	public void joinPlayer(Player player) {
